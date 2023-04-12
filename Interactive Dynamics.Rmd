@@ -1,0 +1,243 @@
+---
+title: "Interactive Dynamics"
+author: "C.F."
+date: "22 March 2023"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Environment Setup
+install.packages("PerformanceAnalytics")
+install.packages("rugarch")
+install.packages("rmgarch")
+install.packages("tidyverse")
+install.packages("tseries")
+
+## Import Dataset
+library(readxl)
+Dataset <- read_excel("Dataset.xlsx")
+View(Dataset)
+df=data.frame(rbind(Dataset))
+
+## Return Calculation
+na.omit(df)
+Date=data.frame(Date=df$Date)
+Date=Date[-1,]
+
+cp=data.frame(Date=Date,Carbon=diff(log(df$Carbon)))
+co=data.frame(Date=Date,Crude.Oil=diff(log(df$Crude.Oil)))
+ng=data.frame(Date=Date,Natural.Gas=diff(log(df$Natural.Gas)))
+cc=data.frame(Date=Date,Coal=diff(log(df$Coal)))
+ep=data.frame(Date=Date,Power=diff(log(df$Power)))
+ae=data.frame(Date=Date,Energy=diff(log(df$Energy)))
+as=data.frame(Date=Date,ESG=diff(log(df$ESG)))
+ast=data.frame(Date=Date,Stock=diff(log(df$Stock)))
+ab=data.frame(Date=Date,Bond=diff(log(df$Bond)))
+ac=data.frame(Date=Date,Currency=diff(log(df$Currency)))
+data=data.frame(df$Carbon,df$Crude.Oil,df$Natural.Gas,df$Coal,df$Power,df$Energy,df$ESG,df$Stock)
+
+## plot returns
+library(tidyverse)
+p_cp <- ggplot(cp, aes(x=cp[,1], y=cp[,2]))
+p_cp + geom_line(colour="steelblue")
+p_co <- ggplot(co, aes(x=co[,1], y=co[,2]))
+p_co + geom_line(colour="steelblue")
+p_ng <- ggplot(ng, aes(x=ng[,1], y=ng[,2]))
+p_ng + geom_line(colour="steelblue")
+p_cc <- ggplot(cc, aes(x=cc[,1], y=cc[,2]))
+p_cc + geom_line(colour="steelblue")
+p_ep <- ggplot(ep, aes(x=ep[,1], y=ep[,2]))
+p_ep + geom_line(colour="steelblue")
+p_ae <- ggplot(ae, aes(x=ae[,1], y=ae[,2]))
+p_ae + geom_line(colour="steelblue")
+p_as <- ggplot(as, aes(x=as[,1], y=as[,2]))
+p_as + geom_line(colour="steelblue")
+p_ast <- ggplot(ast, aes(x=ast[,1], y=ast[,2]))
+p_ast + geom_line(colour="steelblue")
+p_ab <- ggplot(ab, aes(x=ab[,1], y=ab[,2]))
+p_ab + geom_line(colour="steelblue")
+p_ac <- ggplot(ac, aes(x=ac[,1], y=ac[,2]))
+p_ac + geom_line(colour="steelblue")
+
+## plot volatilities
+library(PerformanceAnalytics)
+library(xts)
+xts_cp <- xts(cp[,-1], order.by=cp[,1])
+realizedvol_cp <- rollapply(xts_cp, width = 20, FUN=sd.annualized)
+
+xts_co <- xts(co[,-1], order.by=co[,1])
+realizedvol_co <- rollapply(xts_co, width = 20, FUN=sd.annualized)
+
+xts_ng <- xts(ng[,-1], order.by=ng[,1])
+realizedvol_ng <- rollapply(xts_ng, width = 20, FUN=sd.annualized)
+
+xts_cc <- xts(cc[,-1], order.by=cc[,1])
+realizedvol_cc <- rollapply(xts_cc, width = 20, FUN=sd.annualized)
+
+xts_ep <- xts(ep[,-1], order.by=ep[,1])
+realizedvol_ep <- rollapply(xts_ep, width = 20, FUN=sd.annualized)
+
+xts_ae <- xts(ae[,-1], order.by=ae[,1])
+realizedvol_ae <- rollapply(xts_ae, width = 20, FUN=sd.annualized)
+
+xts_as <- xts(as[,-1], order.by=as[,1])
+realizedvol_as <- rollapply(xts_as, width = 20, FUN=sd.annualized)
+
+xts_ast <- xts(ast[,-1], order.by=ast[,1])
+realizedvol_ast <- rollapply(xts_ast, width = 20, FUN=sd.annualized)
+
+xts_ab <- xts(ab[,-1], order.by=ab[,1])
+realizedvol_ab <- rollapply(xts_ab, width = 20, FUN=sd.annualized)
+
+xts_ac <- xts(ac[,-1], order.by=ac[,1])
+realizedvol_ac <- rollapply(xts_ac, width = 20, FUN=sd.annualized)
+
+vol_cp <- data.frame(index(realizedvol_cp), realizedvol_cp)
+colnames(vol_cp) <- c("date", "volatility")
+
+vol_co <- data.frame(index(realizedvol_co), realizedvol_co)
+colnames(vol_co) <- c("date", "volatility")
+
+vol_ng <- data.frame(index(realizedvol_ng), realizedvol_ng)
+colnames(vol_ng) <- c("date", "volatility")
+
+vol_cc <- data.frame(index(realizedvol_cc), realizedvol_cc)
+colnames(vol_cc) <- c("date", "volatility")
+
+vol_ep <- data.frame(index(realizedvol_ep), realizedvol_ep)
+colnames(vol_ep) <- c("date", "volatility")
+
+vol_ae <- data.frame(index(realizedvol_ae), realizedvol_ae)
+colnames(vol_ae) <- c("date", "volatility")
+
+vol_as <- data.frame(index(realizedvol_as), realizedvol_as)
+colnames(vol_as) <- c("date", "volatility")
+
+vol_ast <- data.frame(index(realizedvol_ast), realizedvol_ast)
+colnames(vol_ast) <- c("date", "volatility")
+
+vol_ab <- data.frame(index(realizedvol_ab), realizedvol_ab)
+colnames(vol_ab) <- c("date", "volatility")
+
+vol_ac <- data.frame(index(realizedvol_ac), realizedvol_ac)
+colnames(vol_ac) <- c("date", "volatility")
+
+p_vol_cp <- ggplot(vol_cp, aes(x=date, y=volatility))
+p_vol_cp + geom_line( color="steelblue")
+
+p_vol_co <- ggplot(vol_co, aes(x=date, y=volatility))
+p_vol_co + geom_line( color="steelblue")
+
+p_vol_ng <- ggplot(vol_ng, aes(x=date, y=volatility))
+p_vol_ng + geom_line( color="steelblue")
+
+p_vol_cc <- ggplot(vol_cc, aes(x=date, y=volatility))
+p_vol_cc + geom_line( color="steelblue")
+
+p_ep_vol <- ggplot(vol, aes(x=date, y=volatility))
+p_ep_vol + geom_line( color="steelblue")
+
+p_vol_ae <- ggplot(vol_ae, aes(x=date, y=volatility))
+p_vol_ae + geom_line( color="steelblue")
+
+p_vol_as <- ggplot(vol_as, aes(x=date, y=volatility))
+p_vol_as + geom_line( color="steelblue")
+
+p_vol_ast <- ggplot(vol_ast, aes(x=date, y=volatility))
+p_vol_ast + geom_line( color="steelblue")
+
+p_vol_ab <- ggplot(vol_ab, aes(x=date, y=volatility))
+p_vol_ab + geom_line( color="steelblue")
+
+p_vol_ac <- ggplot(vol_ac, aes(x=date, y=volatility))
+p_vol_ac + geom_line( color="steelblue")
+
+## GARCH Model
+library(rugarch)
+library(rmgarch)
+library(tseries)
+DCC_garch <- ugarchspec(variance.model=list(model="sGARCH", garchOrder=c(1,1)), mean.model=list(armaOrder=c(0,0)), distribution.model="norm")
+modelspec=dccspec(uspec=multispec(replicate(10,DCC_garch)), dccOrder=c(1,1), distribution="mvnorm")
+model_fit=dccfit(modelspec, data=data.frame(cp$Carbon, co$Crude.Oil, ng$Natural.Gas, cc$Coal, ep$Power, ae$Energy, as$ESG, ast$Stock, ab$Bond, ac$Currency))
+model_fit
+Plot(model_fit)
+
+modelspec1=dccspec(uspec=multispec(replicate(8,DCC_garch)), dccOrder=c(1,1), distribution="mvnorm")
+model_fit1=dccfit(modelspec1, data=data.frame(cp$Carbon, co$Crude.Oil, ng$Natural.Gas, cc$Coal, ep$Power, ae$Energy, as$ESG, ast$Stock))
+Plot(model_fit1)
+
+## GARCH Analysis
+correlation=rcor(model_fit)
+dim(correlation)
+correlation[,,dim(correlation)[3]]
+coras_cp=correlation[8,1,]
+coras_co=correlation[8,2,]
+coras_ng=correlation[8,3,]
+coras_cc=correlation[8,4,]
+coras_ep=correlation[8,5,]
+coras_ae=correlation[8,6,]
+coras_as=correlation[8,7,]
+coras_ab=correlation[8,9,]
+coras_ac=correlation[8,10,]
+plot.ts(coras_cp)
+plot.ts(coras_co)
+plot.ts(coras_ng)
+plot.ts(coras_cc)
+plot.ts(coras_ep)
+plot.ts(coras_ae)
+plot.ts(coras_as)
+plot.ts(coras_ab)
+plot.ts(coras_ac)
+
+covariance=rcov(model_fit)
+dim(covariance)
+covariance[,,dim(covariance)[3]]
+cavas_cp=covariance[8,1,]
+cavas_co=covariance[8,2,]
+cavas_ng=covariance[8,3,]
+cavas_cc=covariance[8,4,]
+cavas_ep=covariance[8,5,]
+cavas_ae=covariance[8,6,]
+cavas_as=covariance[8,7,]
+cavas_ab=covariance[8,9,]
+cavas_ac=covariance[8,10,]
+
+plot.ts(cavas_cp)
+plot.ts(cavas_co)
+plot.ts(cavas_ng)
+plot.ts(cavas_cc)
+plot.ts(cavas_ep)
+plot.ts(cavas_ae)
+plot.ts(cavas_as)
+plot.ts(cavas_ab)
+plot.ts(cavas_ac)
+
+
+## Plot
+Plot(model_fit)
+Plot(model_fit1)
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
